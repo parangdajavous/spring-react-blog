@@ -1,6 +1,5 @@
 package shop.mtcoding.blog.board;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +9,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import shop.mtcoding.blog._core.errors.exception.Exception401;
 import shop.mtcoding.blog._core.utils.ApiUtil;
-import shop.mtcoding.blog._core.utils.JwtUtil;
 import shop.mtcoding.blog.user.SessionUser;
-
-import java.util.List;
 
 @RequiredArgsConstructor // final이 붙은 친구들의 생성자를 만들어줘
 @RestController // new BoardController(IoC에서 BoardRepository를 찾아서 주입) -> IoC 컨테이너 등록
@@ -30,32 +25,6 @@ public class BoardController {
         return ResponseEntity.ok(new ApiUtil(respDTO));
     }
 
-    // 인증 필요 없음
-    @GetMapping("/v1")
-    public ResponseEntity<?> mainV1() {
-        List<BoardResponse.MainDTO> respDTO = boardService.글목록조회();
-        return ResponseEntity.ok(new ApiUtil(respDTO));
-    }
-
-    // 인증 필요 없음
-    @GetMapping("/api/boards/{id}/detail")
-    public ResponseEntity<?> detail(@PathVariable Integer id, HttpServletRequest request) {
-
-        String jwt = request.getHeader("Authorization");
-
-        BoardResponse.DetailDTO respDTO = null;
-
-        try {
-            if (!jwt.isEmpty()) {
-                jwt = jwt.replace("Bearer ", "");
-                SessionUser sessionUser = JwtUtil.verify(jwt);
-                respDTO = boardService.글상세보기(id, sessionUser);
-            }
-        } catch (Exception e) {
-            throw new Exception401("토큰 검증 실패");
-        }
-        return ResponseEntity.ok(new ApiUtil(respDTO));
-    }
 
     @GetMapping("/api/boards/{id}")
     public ResponseEntity<?> findOne(@PathVariable Integer id) {
