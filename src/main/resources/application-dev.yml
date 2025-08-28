@@ -32,5 +32,8 @@ spring:
     defer-datasource-initialization: true
     open-in-view: true
 
+  session:
+    store-type: none
+
 allow:
   host: http://localhost:3000
